@@ -36,14 +36,36 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Check SSH key
+        run: |
+          echo "Checking SSH key format..."
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | ssh-keygen -l -f /dev/stdin || echo "Invalid SSH key format"
+          
+      - name: Test SSH connection
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > deploy_key
+          chmod 600 deploy_key
+          ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@87.228.82.67 "echo 'SSH connection successful'"
+          
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
           host: 87.228.82.67
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          debug: true
           script: |
+            echo "Starting deployment..."
+            pwd
+            ls -la
             cd /home/${{ secrets.SERVER_USER }}/admarket
+            echo "Current directory: $(pwd)"
+            echo "Directory contents:"
+            ls -la
+            echo "Pulling latest changes..."
             git pull origin main
+            echo "Stopping containers..."
             docker compose down
-            docker compose up -d --build 
+            echo "Building and starting containers..."
+            docker compose up -d --build
+            echo "Deployment completed!" 
