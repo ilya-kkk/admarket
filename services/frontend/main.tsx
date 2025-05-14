@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { LucideHome, LucideShoppingCart, LucideUser, LucideDollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { FaSearch, FaUserCircle, FaFire, FaChartLine, FaUsers, FaRubleSign } from "react-icons/fa";
 
 interface Section {
   id: string;
@@ -33,81 +34,108 @@ export default function TeleAdsApp() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <Header />
-      <HomePage />
-      <BottomNavigation sections={sections} />
+    <div className="min-h-screen bg-[#181f2a] flex justify-center items-start py-6">
+      <div className="w-[350px] rounded-3xl bg-[#111827] p-5 shadow-xl">
+        <Header />
+        <SubHeader />
+        <PremiumBanner />
+        <WelcomeCard />
+        <HotOffers />
+      </div>
     </div>
   );
 }
 
 function Header() {
   return (
-    <header className="text-2xl font-bold mb-4 text-center">ТелеРеклама</header>
+    <div className="flex items-center justify-between mb-1">
+      <div className="text-2xl font-bold text-white">ТелеРеклама</div>
+      <div className="flex gap-2 text-white text-xl">
+        <FaSearch className="cursor-pointer" />
+        <FaUserCircle className="cursor-pointer" />
+      </div>
+    </div>
   );
 }
 
-function HomePage() {
+function SubHeader() {
   return (
-    <div className="space-y-4">
-      <PremiumBanner />
-      <WelcomeCard />
-      <MainNavigationCards />
-    </div>
+    <div className="text-gray-300 text-sm mb-4">Маркетплейс рекламы в Telegram-каналах</div>
   );
 }
 
 function PremiumBanner() {
   return (
-    <Card className="bg-gradient-to-r from-indigo-500 to-indigo-700 p-4 rounded-2xl">
-      <div className="text-lg font-semibold">Премиум доступ</div>
-      <div className="text-sm text-gray-200">Разблокируйте все функции</div>
-      <Button className="mt-2 bg-purple-600">Купить подписку</Button>
-    </Card>
+    <div className="bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-2xl p-4 flex items-center justify-between mb-4">
+      <div>
+        <div className="text-base font-semibold text-white">Премиум доступ</div>
+        <div className="text-xs text-gray-200">Разблокируйте все функции</div>
+      </div>
+      <button className="bg-white text-indigo-700 font-semibold px-4 py-2 rounded-xl text-sm shadow">Купить подписку</button>
+    </div>
   );
 }
 
 function WelcomeCard() {
   return (
-    <Card className="p-4 bg-gray-800 rounded-2xl">
-      <h2 className="text-lg font-semibold">Добро пожаловать в ТелеРекламу</h2>
-      <p className="text-sm text-gray-300">Покупайте и продавайте рекламу в Telegram-каналах.</p>
-      <div className="flex justify-between mt-4 text-sm text-gray-400">
-        <div>
-          <strong>1.2K+</strong> Каналов
-        </div>
-        <div>
-          <strong>$50K+</strong> Оборот
-        </div>
+    <div className="bg-[#232b3b] rounded-2xl p-4 mb-4">
+      <div className="text-base font-semibold text-white mb-1">Добро пожаловать в ТелеРекламу</div>
+      <div className="text-xs text-gray-300 mb-3">Покупайте и продавайте рекламу в Telegram-каналах.</div>
+      <div className="flex gap-6 text-xs text-gray-400">
+        <div className="flex items-center gap-1"><FaUsers /> 1.2K+ Каналов</div>
+        <div className="flex items-center gap-1"><FaRubleSign /> $50K+ Оборот</div>
       </div>
-    </Card>
+    </div>
   );
 }
 
-function MainNavigationCards() {
-  const cards = [
+function HotOffers() {
+  const offers = [
     {
-      id: "buy_ads",
-      title: "Купить рекламу",
-      description: "Найдите идеальный канал для вашей рекламы",
-      bg: "bg-gradient-to-r from-blue-800 to-indigo-800"
+      id: 1,
+      title: "ТехноНовости",
+      price: 3500,
+      oldPrice: 5000,
+      discount: 30,
+      subs: 45000,
+      img: "https://via.placeholder.com/60x60?text=%D0%9A%D0%B0%D0%BD%D0%B0%D0%BB"
     },
     {
-      id: "sell_ads",
-      title: "Продать рекламу",
-      description: "Монетизируйте свою аудиторию",
-      bg: "bg-gradient-to-r from-purple-800 to-pink-700"
+      id: 2,
+      title: "КриптоМир",
+      price: 6000,
+      oldPrice: 7500,
+      discount: 20,
+      subs: 78000,
+      img: "https://via.placeholder.com/60x60?text=%D0%9A%D0%B0%D0%BD%D0%B0%D0%BB"
     },
+    // Можно добавить больше предложений
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4">
-      {cards.map(card => (
-        <Card key={card.id} className={`${card.bg} p-4 rounded-2xl`}>
-          <div className="text-lg font-semibold">{card.title}</div>
-          <div className="text-sm text-gray-200">{card.description}</div>
-        </Card>
-      ))}
+    <div className="mb-2">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1 text-orange-400 font-semibold text-base">
+          <FaFire /> Горящие предложения
+        </div>
+        <a href="#" className="text-xs text-blue-400 hover:underline">Все предложения</a>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700">
+        {offers.map(offer => (
+          <div key={offer.id} className="bg-[#232b3b] rounded-2xl p-3 min-w-[140px] max-w-[140px] flex-shrink-0 relative">
+            <img src={offer.img} alt="Канал" className="rounded w-12 h-12 mb-2 object-cover" />
+            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">-{offer.discount}%</div>
+            <div className="text-sm font-semibold text-white mb-1">{offer.title}</div>
+            <div className="flex items-center gap-1 text-xs text-gray-400 mb-1">
+              <FaUsers /> {Math.round(offer.subs/1000)}K
+            </div>
+            <div className="flex items-end gap-1">
+              <span className="text-lg font-bold text-white">₽{offer.price}</span>
+              <span className="text-xs text-gray-400 line-through">₽{offer.oldPrice}</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
