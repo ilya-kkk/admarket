@@ -22,12 +22,12 @@ function AppContent() {
   // Применение темы Telegram
   useEffect(() => {
     if (theme) {
-      document.documentElement.style.setProperty('--tg-theme-bg-color', theme.bg_color || '#ffffff');
-      document.documentElement.style.setProperty('--tg-theme-text-color', theme.text_color || '#000000');
-      document.documentElement.style.setProperty('--tg-theme-hint-color', theme.hint_color || '#999999');
+      document.documentElement.style.setProperty('--tg-theme-bg-color', theme.bg_color || '#fff');
+      document.documentElement.style.setProperty('--tg-theme-text-color', theme.text_color || '#000');
+      document.documentElement.style.setProperty('--tg-theme-hint-color', theme.hint_color || '#999');
       document.documentElement.style.setProperty('--tg-theme-link-color', theme.link_color || '#2481cc');
       document.documentElement.style.setProperty('--tg-theme-button-color', theme.button_color || '#2481cc');
-      document.documentElement.style.setProperty('--tg-theme-button-text-color', theme.button_text_color || '#ffffff');
+      document.documentElement.style.setProperty('--tg-theme-button-text-color', theme.button_text_color || '#fff');
     }
   }, [theme]);
 
