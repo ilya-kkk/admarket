@@ -1,13 +1,18 @@
-import { init } from '@telegram-apps/sdk-react';
+import { init, useLaunchParams } from '@telegram-apps/sdk-react';
 
 // Инициализация SDK
 init();
 
-// Простой хук для работы с Telegram Mini App
+// Хук для работы с Telegram Mini App
 export function useTelegramApp() {
-  // Здесь можно добавить базовую функциональность
+  const launchParams = useLaunchParams();
+  
   return {
-    user: null,
-    theme: null
+    user: launchParams.tgWebAppData?.user,
+    theme: launchParams.tgWebAppThemeParams,
+    platform: launchParams.tgWebAppPlatform,
+    version: launchParams.tgWebAppVersion,
+    initData: launchParams.tgWebAppInitData,
+    initDataUnsafe: launchParams.tgWebAppInitDataUnsafe
   };
 } 
