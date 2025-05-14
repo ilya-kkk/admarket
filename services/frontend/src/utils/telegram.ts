@@ -20,6 +20,26 @@ interface SafeAreaInsets {
   left: number;
 }
 
+// Инициализация Web App
+export function initializeWebApp(): void {
+  if (!window.Telegram?.WebApp) {
+    console.error('Telegram WebApp не инициализирован');
+    return;
+  }
+
+  // Проверяем, что мы находимся в безопасном контексте
+  if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+    console.error('Web App должен быть открыт через HTTPS');
+    return;
+  }
+
+  // Настраиваем Web App
+  window.Telegram.WebApp.expand();
+  window.Telegram.WebApp.enableClosingConfirmation();
+  window.Telegram.WebApp.setHeaderColor('#ffffff');
+  window.Telegram.WebApp.setBackgroundColor('#ffffff');
+}
+
 // Проверка подписи initData
 export function validateInitData(initData: string, botToken: string): boolean {
   try {
@@ -55,6 +75,7 @@ export function validateInitData(initData: string, botToken: string): boolean {
 // Получение initData из WebApp
 export function getInitData(): InitData | null {
   if (!window.Telegram?.WebApp?.initDataUnsafe) {
+    console.error('Telegram WebApp не инициализирован');
     return null;
   }
   return window.Telegram.WebApp.initDataUnsafe;
@@ -82,7 +103,7 @@ export function getSafeAreaInsets(): SafeAreaInsets {
 export function createAuthHeaders() {
   const initData = window.Telegram?.WebApp?.initData;
   if (!initData) {
-    throw new Error('Telegram WebApp not initialized');
+    throw new Error('Telegram WebApp не инициализирован');
   }
   return {
     'X-Telegram-Init-Data': initData,
