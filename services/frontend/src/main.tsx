@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
+import WebApp from '@twa-dev/sdk';
 import { useTelegramApp } from "./telegram";
 import { validateInitData } from './utils/telegram';
 import { SafeArea } from './components/telegram/SafeArea';
@@ -28,21 +29,19 @@ function AppContent() {
 
   // Инициализация Telegram Web App
   useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      // Инициализируем Web App
-      window.Telegram.WebApp.ready();
-      
-      // Разворачиваем на весь экран
-      window.Telegram.WebApp.expand();
+    // Инициализируем Web App
+    WebApp.ready();
+    
+    // Разворачиваем на весь экран
+    WebApp.expand();
 
-      // Проверяем initData
-      const initData = window.Telegram.WebApp.initData;
-      const botToken = import.meta.env.VITE_BOT_TOKEN;
-      
-      if (!validateInitData(initData, botToken)) {
-        console.error('Invalid initData');
-        return;
-      }
+    // Проверяем initData
+    const initData = WebApp.initData;
+    const botToken = import.meta.env.VITE_BOT_TOKEN;
+    
+    if (!validateInitData(initData, botToken)) {
+      console.error('Invalid initData');
+      return;
     }
   }, []);
 
