@@ -21,13 +21,21 @@ WEBAPP_URL = os.getenv('WEBAPP_URL', 'http://localhost:3000')
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик команды /start"""
     try:
-        # Приветственное сообщение
+        keyboard = [
+            [InlineKeyboardButton(
+                "Открыть веб-приложение",
+                web_app=WebAppInfo(url=WEBAPP_URL)
+            )]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        # Приветственное сообщение с кнопкой
         await update.message.reply_text(
             "👋 Привет! Я бот для работы с веб-приложением.\n\n"
             "Доступные команды:\n"
             "/start - Показать это сообщение\n"
             "/help - Показать справку\n"
-            "/webapp - Открыть веб-приложение"
+            "/webapp - Открыть веб-приложение",
+            reply_markup=reply_markup
         )
     except Exception as e:
         logger.error(f"Ошибка при отправке приветственного сообщения: {e}")

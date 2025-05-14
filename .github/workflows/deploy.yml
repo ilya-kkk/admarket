@@ -1,5 +1,4 @@
-name: CI/CD Pipeline
-
+name: Deploy to server
 on:
   push:
     branches:
