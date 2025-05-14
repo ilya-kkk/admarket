@@ -32,39 +32,12 @@ jobs:
           cd services/backend-bot
           python -m pytest tests/ -v
 
-  build:
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push bot image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/backend-bot
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/frontend
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+      
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -87,24 +60,24 @@ jobs:
             echo "Starting deployment..."
             cd /root/admarket
             
-            # Login to Docker Hub
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-            
-            # Pull latest images
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest
-            
-            # Update docker-compose.yml with new image tags
-            sed -i "s|image: .*admarket-bot.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest|" docker-compose.yml
-            sed -i "s|image: .*admarket-frontend.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest|" docker-compose.yml
-            
-            # Stop and remove old containers
+            # Остановка и удаление старых контейнеров
             docker compose down
             
-            # Start new containers
+            # Получение последних изменений
+            git pull origin main
+            
+            # Сборка и запуск новых контейнеров
+            docker compose build --no-cache
             docker compose up -d
             
-            # Clean up old images
+            # Очистка неиспользуемых образов
             docker image prune -f
             
-            echo "Deployment completed!" 
+            echo "Deployment completed!"
+            
+            # Проверка логов
+            echo "Checking container logs..."
+            echo "=== Bot logs ==="
+            docker compose logs bot --tail=50
+            echo "=== Frontend logs ==="
+            docker compose logs frontend --tail=50 
