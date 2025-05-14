@@ -1,2 +1,5 @@
 python-telegram-bot==20.7
-python-dotenv==1.0.0 
+python-dotenv==1.0.0
+pytest==8.3.5
+pytest-asyncio==0.23.5
+pytest-mock==3.12.0 

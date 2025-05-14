@@ -19,7 +19,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest
+          pip install flake8 pytest pytest-asyncio pytest-mock
           if [ -f services/backend-bot/requirements.txt ]; then pip install -r services/backend-bot/requirements.txt; fi
           
       - name: Lint with flake8
@@ -29,7 +29,8 @@ jobs:
           
       - name: Test with pytest
         run: |
-          pytest
+          cd services/backend-bot
+          python -m pytest tests/ -v
 
   deploy:
     needs: test
