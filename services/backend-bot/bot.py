@@ -23,7 +23,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         keyboard = [
             [InlineKeyboardButton(
-                "Открыть веб-приложение",
+                "Открыть веб-приложение наконецто уже",
                 web_app=WebAppInfo(url=WEBAPP_URL)
             )]
         ]
