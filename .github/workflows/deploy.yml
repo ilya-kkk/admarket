@@ -41,24 +41,29 @@ jobs:
           echo "Checking SSH key format..."
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | ssh-keygen -l -f /dev/stdin || echo "Invalid SSH key format"
           
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 87.228.82.67 >> ~/.ssh/known_hosts
+          
       - name: Test SSH connection
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > deploy_key
-          chmod 600 deploy_key
-          ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@87.228.82.67 "echo 'SSH connection successful'"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no root@87.228.82.67 "echo 'SSH connection successful'"
           
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
           host: 87.228.82.67
-          username: ${{ secrets.SERVER_USER }}
+          username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           debug: true
           script: |
             echo "Starting deployment..."
             pwd
             ls -la
-            cd /home/${{ secrets.SERVER_USER }}/admarket
+            cd /root/admarket
             echo "Current directory: $(pwd)"
             echo "Directory contents:"
             ls -la
