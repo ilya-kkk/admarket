@@ -19,6 +19,24 @@ import "./styles/main.css";
 function AppContent() {
   const { theme } = useTelegramApp();
 
+  // Инициализация Telegram Web App
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      // Инициализируем Web App
+      window.Telegram.WebApp.ready();
+      
+      // Разворачиваем на весь экран
+      window.Telegram.WebApp.expand();
+      
+      // Настраиваем основную кнопку
+      window.Telegram.WebApp.MainButton.setText('Продолжить');
+      window.Telegram.WebApp.MainButton.show();
+      
+      // Настраиваем кнопку "Назад"
+      window.Telegram.WebApp.BackButton.show();
+    }
+  }, []);
+
   // Применение темы Telegram
   useEffect(() => {
     if (theme) {
@@ -55,31 +73,15 @@ function TeleAdsApp() {
   );
 }
 
-// Проверка, что приложение запущено внутри Telegram
-
-
 // Инициализация приложения
 const root = document.getElementById('root');
 if (!root) {
   throw new Error('Root element not found');
 }
 
-if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-  // Инициализация Telegram Web App
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
-
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <TeleAdsApp />
-    </React.StrictMode>
-  );
-} else {
-  console.error('Приложение должно быть запущено внутри Telegram Mini App');
-  // Для разработки можно рендерить приложение без Telegram
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <TeleAdsApp />
-    </React.StrictMode>
-  );
-}
+// Рендерим приложение
+ReactDOM.createRoot(root).render(
+  <React.StrictMode>
+    <TeleAdsApp />
+  </React.StrictMode>
+);
