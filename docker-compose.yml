@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   bot:
-    build:
-      context: ./services/backend-bot
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME}/admarket-bot:latest
     env_file:
       - ./services/backend-bot/.env
     environment:
@@ -22,9 +20,7 @@ services:
       start_period: 40s
 
   frontend:
-    build:
-      context: ./services/frontend
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME}/admarket-frontend:latest
     ports:
       - "3000:3000"
     environment:

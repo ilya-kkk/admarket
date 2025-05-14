@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: CI/CD Pipeline
 
 on:
   push:
@@ -32,15 +32,39 @@ jobs:
           cd services/backend-bot
           python -m pytest tests/ -v
 
-  deploy:
+  build:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Check SSH key
-        run: |
-          echo "Checking SSH key format..."
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | ssh-keygen -l -f /dev/stdin || echo "Invalid SSH key format"
-          
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push bot image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/backend-bot
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/frontend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -61,16 +85,26 @@ jobs:
           debug: true
           script: |
             echo "Starting deployment..."
-            pwd
-            ls -la
             cd /root/admarket
-            echo "Current directory: $(pwd)"
-            echo "Directory contents:"
-            ls -la
-            echo "Pulling latest changes..."
-            git pull origin main
-            echo "Stopping containers..."
+            
+            # Login to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+            
+            # Pull latest images
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest
+            
+            # Update docker-compose.yml with new image tags
+            sed -i "s|image: .*admarket-bot.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-bot:latest|" docker-compose.yml
+            sed -i "s|image: .*admarket-frontend.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/admarket-frontend:latest|" docker-compose.yml
+            
+            # Stop and remove old containers
             docker compose down
-            echo "Building and starting containers..."
-            docker compose up -d --build
+            
+            # Start new containers
+            docker compose up -d
+            
+            # Clean up old images
+            docker image prune -f
+            
             echo "Deployment completed!" 
