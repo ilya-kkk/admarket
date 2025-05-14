@@ -51,8 +51,8 @@ function Header() {
     <div className="flex items-center justify-between mb-1">
       <div className="text-2xl font-bold text-white">ТелеРеклама</div>
       <div className="flex gap-2 text-white text-xl">
-        <FaSearch className="cursor-pointer" />
-        <FaUserCircle className="cursor-pointer" />
+        {React.createElement(FaSearch as any, { className: "cursor-pointer" })}
+        {React.createElement(FaUserCircle as any, { className: "cursor-pointer" })}
       </div>
     </div>
   );
