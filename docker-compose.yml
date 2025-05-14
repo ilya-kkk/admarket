@@ -7,10 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: admarket-bot
     restart: always
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - WEBHOOK_URL=${WEBHOOK_URL}
-      - DATABASE_URL=${DATABASE_URL}
+    env_file:
+      - .env
     depends_on:
       - db
     healthcheck:
@@ -34,4 +32,23 @@ services:
       - /etc/letsencrypt/live/tgadmarketplace.ru-0001:/etc/letsencrypt/live/tgadmarketplace.ru-0001:ro
     depends_on:
       - bot
+
+  db:
+    image: postgres:15
+    container_name: admarket-db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
 
