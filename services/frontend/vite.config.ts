@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import fs from 'fs'
 import path from 'path'
 
 export default defineConfig({
@@ -10,7 +11,15 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, '.cert/key.pem')),
+      cert: fs.readFileSync(path.resolve(__dirname, '.cert/cert.pem')),
+    },
     host: true,
+    port: 5173,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
   },
 }) 

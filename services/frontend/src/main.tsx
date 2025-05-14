@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
-import { useTelegramApp } from './src/telegram';
+import { useTelegramApp } from "./telegram";
 
 // Импорт страниц
-import HomePage from './src/pages/HomePage';
-import BuyAdsPage from './src/pages/BuyAdsPage';
-import BuyAdsPremiumPage from './src/pages/BuyAdsPremiumPage';
-import ChannelDetailPage from './src/pages/ChannelDetailPage';
-import ChannelDetailPremiumPage from './src/pages/ChannelDetailPremiumPage';
-import ChannelOffersPage from './src/pages/ChannelOffersPage';
-import SellAdsPage from './src/pages/SellAdsPage';
+import HomePage from "./pages/HomePage";
+import BuyAdsPage from "./pages/BuyAdsPage";
+import BuyAdsPremiumPage from "./pages/BuyAdsPremiumPage";
+import ChannelDetailPage from "./pages/ChannelDetailPage";
+import ChannelDetailPremiumPage from "./pages/ChannelDetailPremiumPage";
+import ChannelOffersPage from "./pages/ChannelOffersPage";
+import SellAdsPage from "./pages/SellAdsPage";
 
 // Импорт стилей
-import './src/styles/main.css';
+import "./styles/main.css";
 
 // Компонент приложения
 function AppContent() {
@@ -56,34 +56,7 @@ function TeleAdsApp() {
 }
 
 // Проверка, что приложение запущено внутри Telegram
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        ready: () => void;
-        expand: () => void;
-        close: () => void;
-        MainButton: {
-          show: () => void;
-          hide: () => void;
-          setText: (text: string) => void;
-        };
-        BackButton: {
-          show: () => void;
-          hide: () => void;
-        };
-        themeParams: {
-          bg_color?: string;
-          text_color?: string;
-          hint_color?: string;
-          link_color?: string;
-          button_color?: string;
-          button_text_color?: string;
-        };
-      };
-    };
-  }
-}
+
 
 // Инициализация приложения
 const root = document.getElementById('root');
