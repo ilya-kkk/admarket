@@ -1,19 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import { useTelegramApp } from "./telegram";
+import { validateInitData } from './utils/telegram';
+import { SafeArea } from './components/telegram/SafeArea';
 
-// Импорт страниц
-import HomePage from "./pages/HomePage";
-import BuyAdsPage from "./pages/BuyAdsPage";
-import BuyAdsPremiumPage from "./pages/BuyAdsPremiumPage";
-import ChannelDetailPage from "./pages/ChannelDetailPage";
-import ChannelDetailPremiumPage from "./pages/ChannelDetailPremiumPage";
-import ChannelOffersPage from "./pages/ChannelOffersPage";
-import SellAdsPage from "./pages/SellAdsPage";
+// Ленивая загрузка страниц
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+const BuyAdsPage = React.lazy(() => import('./pages/BuyAdsPage'));
+const BuyAdsPremiumPage = React.lazy(() => import('./pages/BuyAdsPremiumPage'));
+const ChannelDetailPage = React.lazy(() => import('./pages/ChannelDetailPage'));
+const ChannelDetailPremiumPage = React.lazy(() => import('./pages/ChannelDetailPremiumPage'));
+const ChannelOffersPage = React.lazy(() => import('./pages/ChannelOffersPage'));
+const SellAdsPage = React.lazy(() => import('./pages/SellAdsPage'));
 
 // Импорт стилей
 import "./styles/main.css";
+
+// Компонент загрузки
+function LoadingFallback() {
+  return <div>Загрузка...</div>;
+}
 
 // Компонент приложения
 function AppContent() {
@@ -27,13 +34,15 @@ function AppContent() {
       
       // Разворачиваем на весь экран
       window.Telegram.WebApp.expand();
+
+      // Проверяем initData
+      const initData = window.Telegram.WebApp.initData;
+      const botToken = import.meta.env.VITE_BOT_TOKEN;
       
-      // Настраиваем основную кнопку
-      window.Telegram.WebApp.MainButton.setText('Продолжить');
-      window.Telegram.WebApp.MainButton.show();
-      
-      // Настраиваем кнопку "Назад"
-      window.Telegram.WebApp.BackButton.show();
+      if (!validateInitData(initData, botToken)) {
+        console.error('Invalid initData');
+        return;
+      }
     }
   }, []);
 
@@ -50,17 +59,19 @@ function AppContent() {
   }, [theme]);
 
   return (
-    <div className="app">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/buy" element={<BuyAdsPage />} />
-        <Route path="/buy/premium" element={<BuyAdsPremiumPage />} />
-        <Route path="/channel/:id" element={<ChannelDetailPage />} />
-        <Route path="/channel/:id/premium" element={<ChannelDetailPremiumPage />} />
-        <Route path="/channel/:id/offers" element={<ChannelOffersPage />} />
-        <Route path="/sell" element={<SellAdsPage />} />
-      </Routes>
-    </div>
+    <SafeArea>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/buy" element={<BuyAdsPage />} />
+          <Route path="/buy/premium" element={<BuyAdsPremiumPage />} />
+          <Route path="/channel/:id" element={<ChannelDetailPage />} />
+          <Route path="/channel/:id/premium" element={<ChannelDetailPremiumPage />} />
+          <Route path="/channel/:id/offers" element={<ChannelOffersPage />} />
+          <Route path="/sell" element={<SellAdsPage />} />
+        </Routes>
+      </Suspense>
+    </SafeArea>
   );
 }
 
