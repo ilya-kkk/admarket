@@ -6,8 +6,8 @@ WORKDIR /app
 # Копируем файлы package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости, включая react-icons
-RUN npm install && npm install react-icons
+# Устанавливаем зависимости, включая react-icons и vite
+RUN npm install && npm install react-icons && npm install --save-dev vite
 
 # Копируем исходный код
 COPY . .
