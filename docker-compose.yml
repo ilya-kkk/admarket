@@ -13,6 +13,13 @@ services:
       - frontend
     networks:
       - app-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "ps", "aux", "|", "grep", "python3"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
     build:
@@ -21,16 +28,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     volumes:
-      - ./services/frontend:/app
-      - /app/node_modules
+      - ./services/frontend/certificates:/app/certificates
     networks:
       - app-network
+    restart: always
 
 networks:
-  admarket-network:
-    driver: bridge
   app-network:
     driver: bridge
 
